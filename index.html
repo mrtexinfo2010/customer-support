@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HelpDesk — Customer Support Center</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#4f46e5;--primary-dark:#4338ca;--primary-light:#eef2ff;
+  --dark:#0f172a;--text:#334155;--muted:#64748b;
+  --bg:#f8fafc;--border:#e2e8f0;--danger:#ef4444;
+  --radius:14px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05);
+  --shadow-md:0 12px 30px -8px rgba(0,0,0,.15);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,sans-serif;color:var(--text);background:var(--bg);line-height:1.6}
+.container{max-width:1140px;margin:0 auto;padding:0 20px}
+section{padding:80px 0;scroll-margin-top:70px}
+.section-title{text-align:center;margin-bottom:48px}
+.section-title h2{font-size:2.2rem;color:var(--dark);margin-bottom:10px;font-weight:800}
+.section-title p{color:var(--muted);font-size:1.05rem;max-width:600px;margin:0 auto}
+.btn{display:inline-block;padding:13px 26px;border-radius:9px;border:none;cursor:pointer;font-weight:600;font-size:1rem;transition:.2s;text-decoration:none;font-family:inherit}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-1px);box-shadow:0 6px 16px rgba(79,70,229,.35)}
+
+/* ---------- Navbar ---------- */
+.navbar{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-container{display:flex;align-items:center;justify-content:space-between;height:70px}
+.logo{display:flex;align-items:center;gap:10px;font-size:1.35rem;font-weight:800;color:var(--dark);text-decoration:none}
+.logo-icon{width:38px;height:38px;background:var(--primary);color:#fff;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.nav-links{display:flex;list-style:none;gap:32px}
+.nav-links a{text-decoration:none;color:var(--text);font-weight:500;transition:.2s}
+.nav-links a:hover{color:var(--primary)}
+.hamburger{display:none;background:none;border:none;font-size:1.7rem;cursor:pointer;color:var(--dark)}
+
+/* ---------- Hero ---------- */
+.hero{background:linear-gradient(135deg,#4f46e5 0%,#7c3aed 100%);color:#fff;text-align:center;padding:100px 0 140px;position:relative;overflow:hidden}
+.hero::before,.hero::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.07)}
+.hero::before{width:500px;height:500px;top:-220px;right:-120px}
+.hero::after{width:380px;height:380px;bottom:-180px;left:-100px}
+.hero .container{position:relative;z-index:1}
+.hero h1{font-size:3rem;margin-bottom:14px;font-weight:800;letter-spacing:-.5px}
+.hero p{font-size:1.15rem;opacity:.9;margin-bottom:36px}
+.search-box{max-width:640px;margin:0 auto;display:flex;background:#fff;border-radius:50px;padding:6px;box-shadow:var(--shadow-md)}
+.search-box input{flex:1;border:none;outline:none;padding:14px 22px;font-size:1rem;border-radius:50px;color:var(--dark);background:transparent;font-family:inherit}
+.search-box button{background:var(--primary);color:#fff;border:none;padding:0 28px;border-radius:50px;font-weight:600;cursor:pointer;transition:.2s;font-family:inherit;font-size:1rem}
+.search-box button:hover{background:var(--primary-dark)}
+.hero-stats{display:flex;justify-content:center;gap:56px;margin-top:50px;flex-wrap:wrap}
+.stat h3{font-size:1.8rem;font-weight:800;line-height:1.2}
+.stat span{font-size:.9rem;opacity:.85}
+
+/* ---------- Categories ---------- */
+.categories{padding:0 0 80px;margin-top:-70px;position:relative;z-index:2}
+.cat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px}
+.cat-card{background:#fff;border-radius:var(--radius);padding:30px;box-shadow:var(--shadow);border:1px solid var(--border);cursor:pointer;transition:.25s}
+.cat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-md);border-color:var(--primary)}
+.cat-icon{width:56px;height:56px;border-radius:14px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.6rem;margin-bottom:18px}
+.cat-card h3{color:var(--dark);margin-bottom:8px;font-size:1.15rem}
+.cat-card p{color:var(--muted);font-size:.95rem;margin-bottom:14px}
+.cat-card .count{color:var(--primary);font-weight:600;font-size:.9rem}
+
+/* ---------- FAQ ---------- */
+.faq-filters{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px}
+.filter-btn{padding:8px 18px;border-radius:50px;border:1px solid var(--border);background:#fff;cursor:pointer;font-weight:500;color:var(--text);transition:.2s;font-family:inherit;font-size:.93rem}
+.filter-btn.active,.filter-btn:hover{background:var(--primary);color:#fff;border-color:var(--primary)}
+.search-tag{display:none;align-items:center;justify-content:center;gap:12px;margin:-12px auto 24px;color:var(--muted);font-size:.95rem}
+.search-tag button{background:none;border:1px solid var(--border);border-radius:50px;padding:4px 12px;cursor:pointer;color:var(--danger);font-size:.85rem;font-family:inherit}
+.faq-list{max-width:800px;margin:0 auto}
+.faq-item{background:#fff;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:12px;overflow:hidden;transition:.2s}
+.faq-item.open{border-color:var(--primary);box-shadow:var(--shadow)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;cursor:pointer;font-weight:600;color:var(--dark);gap:16px}
+.faq-q .arrow{transition:.3s;color:var(--primary);flex-shrink:0;font-size:.75rem}
+.faq-item.open .arrow{transform:rotate(180deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease,padding .35s ease;padding:0 24px;color:var(--muted)}
+.faq-item.open .faq-a{max-height:500px;padding:0 24px 20px}
+.no-results{text-align:center;color:var(--muted);padding:40px;display:none}
+.no-results a{color:var(--primary);font-weight:600}
+
+/* ---------- Ticket ---------- */
+.ticket-section{background:#fff}
+.ticket-wrap{display:grid;grid-template-columns:1fr 1.4fr;gap:50px;align-items:start}
+.ticket-info h3{font-size:1.5rem;color:var(--dark);margin-bottom:24px}
+.ticket-info ul{list-style:none}
+.ticket-info li{display:flex;gap:14px;margin-bottom:22px}
+.ticket-info .ico{width:46px;height:46px;border-radius:12px;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0}
+.ticket-info strong{color:var(--dark)}
+.ticket-info li p{color:var(--muted);font-size:.93rem;margin-top:2px}
+.urgent-box{background:var(--primary-light);border-left:4px solid var(--primary);padding:16px 18px;border-radius:8px;margin-top:8px}
+.urgent-box strong{color:var(--dark)}
+.urgent-box p{font-size:.93rem;margin-top:4px}
+.urgent-box a{color:var(--primary);font-weight:600;text-decoration:none}
+.form-card{background:#fff;border-radius:var(--radius);padding:36px;box-shadow:var(--shadow-md);border:1px solid var(--border)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.form-group{margin-bottom:18px}
+.form-group label{display:block;font-weight:600;margin-bottom:7px;color:var(--dark);font-size:.93rem}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 14px;border:1px solid var(--border);border-radius:9px;font-size:1rem;font-family:inherit;transition:.2s;background:#fff;color:var(--dark)}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(79,70,229,.15)}
+.form-group textarea{resize:vertical;min-height:130px}
+.form-group .error{color:var(--danger);font-size:.85rem;margin-top:5px;display:none}
+.form-group.invalid input,.form-group.invalid textarea{border-color:var(--danger)}
+.form-group.invalid .error{display:block}
+.success-box{display:none;background:#ecfdf5;border:1px solid #a7f3d0;color:#065f46;padding:30px;border-radius:var(--radius);text-align:center}
+.success-box h3{margin-bottom:8px;font-size:1.4rem}
+.success-box .tid{font-weight:800;color:var(--primary);font-size:1.25rem}
+
+/* ---------- Contact ---------- */
+.contact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:24px}
+.contact-card{background:#fff;padding:32px 24px;border-radius:var(--radius);text-align:center;border:1px solid var(--border);box-shadow:var(--shadow);transition:.25s}
+.contact-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.contact-card .ico{font-size:2.2rem;margin-bottom:14px}
+.contact-card h3{color:var(--dark);margin-bottom:6px}
+.contact-card p{color:var(--muted);font-size:.93rem;margin-bottom:10px}
+.contact-card a{color:var(--primary);text-decoration:none;font-weight:600}
+
+/* ---------- Footer ---------- */
+footer{background:var(--dark);color:#cbd5e1;padding:60px 0 24px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-grid h4{color:#fff;margin-bottom:16px;font-size:1.05rem}
+.footer-grid ul{list-style:none}
+.footer-grid li{margin-bottom:10px}
+.footer-grid a{color:#cbd5e1;text-decoration:none;transition:.2s;font-size:.95rem}
+.footer-grid a:hover{color:#fff}
+.footer-grid .logo{color:#fff;margin-bottom:14px}
+.footer-grid .desc{font-size:.95rem;max-width:300px;color:#94a3b8}
+.footer-bottom{border-top:1px solid #334155;padding-top:24px;text-align:center;font-size:.9rem;color:#94a3b8}
+
+/* ---------- Live Chat Widget ---------- */
+.chat-btn{position:fixed;bottom:24px;right:24px;width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;border:none;font-size:1.6rem;cursor:pointer;box-shadow:0 10px 25px rgba(79,70,229,.45);z-index:200;transition:.25s;display:flex;align-items:center;justify-content:center}
+.chat-btn:hover{transform:scale(1.08)}
+.chat-btn .badge{position:absolute;top:-2px;right:-2px;width:20px;height:20px;background:var(--danger);border-radius:50%;font-size:.7rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff}
+.chat-window{position:fixed;bottom:100px;right:24px;width:370px;max-width:calc(100vw - 48px);height:520px;max-height:calc(100vh - 130px);background:#fff;border-radius:18px;box-shadow:0 20px 50px rgba(0,0,0,.22);z-index:200;display:flex;flex-direction:column;overflow:hidden;transform:translateY(20px) scale(.95);opacity:0;pointer-events:none;transition:.3s}
+.chat-window.open{transform:none;opacity:1;pointer-events:all}
+.chat-header{background:var(--primary);color:#fff;padding:16px 18px;display:flex;align-items:center;gap:12px}
+.chat-header .avatar{width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:1.3rem}
+.chat-header h4{font-size:1rem}
+.chat-header small{opacity:.9;display:flex;align-items:center;gap:6px;font-size:.78rem}
+.online-dot{width:8px;height:8px;background:#4ade80;border-radius:50%;display:inline-block}
+.chat-close{margin-left:auto;background:none;border:none;color:#fff;font-size:1.6rem;cursor:pointer;line-height:1}
+.chat-body{flex:1;padding:16px;overflow-y:auto;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.msg{max-width:82%;padding:10px 14px;border-radius:14px;font-size:.93rem;line-height:1.5;animation:fadeIn .3s}
+.msg.bot{background:#fff;border:1px solid var(--border);align-self:flex-start;border-bottom-left-radius:4px;color:var(--text)}
+.msg.bot a{color:var(--primary);font-weight:600}
+.msg.user{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+.msg.typing span{display:inline-block;width:7px;height:7px;background:#94a3b8;border-radius:50%;margin:0 2px;animation:blink 1.2s infinite}
+.msg.typing span:nth-child(2){animation-delay:.2s}
+.msg.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.3}40%{opacity:1}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.quick-replies{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 10px;background:var(--bg)}
+.quick-replies button{padding:6px 12px;border-radius:50px;border:1px solid var(--primary);background:#fff;color:var(--primary);font-size:.8rem;cursor:pointer;transition:.2s;font-family:inherit}
+.quick-replies button:hover{background:var(--primary);color:#fff}
+.chat-input{display:flex;padding:12px;border-top:1px solid var(--border);gap:8px;background:#fff}
+.chat-input input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:50px;outline:none;font-size:.95rem;font-family:inherit}
+.chat-input input:focus{border-color:var(--primary)}
+.chat-input button{width:42px;height:42px;border-radius:50%;background:var(--primary);color:#fff;border:none;cursor:pointer;font-size:1.1rem;flex-shrink:0}
+
+/* ---------- Responsive ---------- */
+@media(max-width:900px){
+  .ticket-wrap{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  .hamburger{display:block}
+  .nav-links{position:absolute;top:70px;left:0;right:0;background:#fff;flex-direction:column;gap:0;border-bottom:1px solid var(--border);display:none;box-shadow:var(--shadow-md)}
+  .nav-links.show{display:flex}
+  .nav-links li{padding:14px 20px;border-top:1px solid var(--border)}
+  .hero{padding:70px 0 120px}
+  .hero h1{font-size:2.1rem}
+  .hero p{font-size:1.05rem}
+  .search-box{flex-direction:column;border-radius:18px;gap:6px}
+  .search-box button{padding:12px}
+  .hero-stats{gap:28px}
+  .form-row{grid-template-columns:1fr}
+  .form-card{padding:24px}
+  section{padding:60px 0}
+  .section-title h2{font-size:1.7rem}
+}
+@media(max-width:500px){
+  .footer-grid{grid-template-columns:1fr}
+  .chat-window{right:12px;bottom:90px;max-width:calc(100vw - 24px)}
+  .chat-btn{right:14px;bottom:16px}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar">
+  <div class="container nav-container">
+    <a href="#home" class="logo"><span class="logo-icon">💬</span>HelpDesk</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#categories">Help Center</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#ticket">Submit Ticket</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">☰</button>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero" id="home">
+  <div class="container">
+    <h1>How can we help you today?</h1>
+    <p>Search our knowledge base or browse the help topics below to find quick answers.</p>
+    <form class="search-box" id="searchForm">
+      <input type="text" id="searchInput" placeholder="Search for answers… e.g. refund, password, tracking" autocomplete="off">
+      <button type="submit">Search</button>
+    </form>
+    <div class="hero-stats">
+      <div class="stat"><h3>24/7</h3><span>Support Available</span></div>
+      <div class="stat"><h3>&lt; 2 min</h3><span>Avg. Response Time</span></div>
+      <div class="stat"><h3>98%</h3><span>Customer Satisfaction</span></div>
+      <div class="stat"><h3>50k+</h3><span>Issues Resolved</span></div>
+    </div>
+  </div>
+</header>
+
+<!-- ===== CATEGORIES ===== -->
+<section class="categories" id="categories">
+  <div class="container">
+    <div class="cat-grid" id="catGrid"></div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section id="faq">
+  <div class="container">
+    <div class="section-title">
+      <h2>Frequently Asked Questions</h2>
+      <p>Quick answers to the questions we get asked the most.</p>
+    </div>
+    <div class="faq-filters" id="faqFilters"></div>
+    <div class="search-tag" id="searchTag">Showing results for “<b id="searchTerm"></b>” <button id="clearSearch">✕ Clear</button></div>
+    <div class="faq-list" id="faqList"></div>
+    <div class="no-results" id="noResults">😕 No results found. Try a different keyword or <a href="#ticket">submit a ticket</a>.</div>
+  </div>
+</section>
+
+<!-- ===== TICKET ===== -->
+<section id="ticket" class="ticket-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Submit a Support Ticket</h2>
+      <p>Couldn’t find what you’re looking for? Our team will get back to you within 24 hours.</p>
+    </div>
+    <div class="ticket-wrap">
+      <div class="ticket-info">
+        <h3>What happens next?</h3>
+        <ul>
+          <li><div class="ico">📝</div><div><strong>1. Submit your request</strong><p>Fill in the form with as much detail as possible.</p></div></li>
+          <li><div class="ico">🎫</div><div><strong>2. Get a ticket ID</strong><p>You’ll instantly receive a confirmation email with your ticket number.</p></div></li>
+          <li><div class="ico">👩‍💻</div><div><strong>3. We investigate</strong><p>A support specialist reviews and works on your issue.</p></div></li>
+          <li><div class="ico">✅</div><div><strong>4. Problem solved</strong><p>We reply with a solution — usually within 24 hours.</p></div></li>
+        </ul>
+        <div class="urgent-box">
+          <strong>⚡ Need urgent help?</strong>
+          <p>Call our hotline <a href="tel:+8801700000000">+880 1700-000000</a> — available 24/7.</p>
+        </div>
+      </div>
+
+      <div class="form-card">
+        <form id="ticketForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input type="text" id="name" placeholder="e.g. Rahim Ahmed">
+              <div class="error">Please enter your full name.</div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" placeholder="you@example.com">
+              <div class="error">Please enter a valid email address.</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="category">Category</label>
+              <select id="category">
+                <option>General Inquiry</option>
+                <option>Account &amp; Billing</option>
+                <option>Orders &amp; Shipping</option>
+                <option>Technical Issue</option>
+                <option>Returns &amp; Refunds</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="priority">Priority</label>
+              <select id="priority">
+                <option>Low</option>
+                <option selected>Medium</option>
+                <option>High</option>
+                <option>Urgent</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="subject">Subject *</label>
+            <input type="text" id="subject" placeholder="Brief summary of your issue">
+            <div class="error">Please enter a subject.</div>
+          </div>
+          <div class="form-group">
+            <label for="message">Message *</label>
+            <textarea id="message" placeholder="Describe your issue in detail…"></textarea>
+            <div class="error">Please describe your issue (at least 20 characters).</div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%">Submit Ticket</button>
+        </form>
+
+        <div class="success-box" id="successBox">
+          <div style="font-size:3rem;margin-bottom:8px">✅</div>
+          <h3>Ticket Submitted Successfully!</h3>
+          <p>Your ticket ID is <span class="tid" id="ticketId"></span></p>
+          <p style="margin-top:8px">We’ve sent a confirmation to <b id="ticketEmail"></b>. Our team will respond within 24 hours.</p>
+          <button class="btn btn-primary" id="newTicket" style="margin-top:22px">Submit Another Ticket</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section id="contact">
+  <div class="container">
+    <div class="section-title">
+      <h2>Get in Touch</h2>
+      <p>Prefer to talk to us directly? Here’s how you can reach our team.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-card"><div class="ico">📧</div><h3>Email Us</h3><p>We reply within 24 hours</p><a href="mailto:support@helpdesk.com">support@helpdesk.com</a></div>
+      <div class="contact-card"><div class="ico">📞</div><h3>Call Us</h3><p>Sat – Thu, 9 AM – 9 PM</p><a href="tel:+8801700000000">+880 1700-000000</a></div>
+      <div class="contact-card"><div class="ico">💬</div><h3>Live Chat</h3><p>Instant answers, any time</p><a href="#" id="openChatLink">Start Chat →</a></div>
+      <div class="contact-card"><div class="ico">📍</div><h3>Visit Us</h3><p>House 12, Road 5, Banani<br>Dhaka 1213, Bangladesh</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a href="#home" class="logo"><span class="logo-icon">💬</span>HelpDesk</a>
+        <p class="desc">We’re here to help you 24/7. Fast, friendly and reliable customer support for all your needs.</p>
+      </div>
+      <div><h4>Support</h4><ul><li><a href="#categories">Help Center</a></li><li><a href="#faq">FAQ</a></li><li><a href="#ticket">Submit Ticket</a></li><li><a href="#contact">Contact Us</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Careers</a></li><li><a href="#">Blog</a></li><li><a href="#">Press</a></li></ul></div>
+      <div><h4>Legal</h4><ul><li><a href="#">Privacy Policy</a></li><li><a href="#">Terms of Service</a></li><li><a href="#">Refund Policy</a></li><li><a href="#">Cookie Policy</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">© 2025 HelpDesk Inc. All rights reserved.</div>
+  </div>
+</footer>
+
+<!-- ===== LIVE CHAT WIDGET ===== -->
+<button class="chat-btn" id="chatBtn" aria-label="Open live chat"><span id="chatIcon">💬</span><span class="badge" id="chatBadge">1</span></button>
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <div class="avatar">🤖</div>
+    <div><h4>Support Assistant</h4><small><span class="online-dot"></span> Online · Replies instantly</small></div>
+    <button class="chat-close" id="chatClose" aria-label="Close chat">×</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="quick-replies" id="quickReplies">
+    <button>Track my order</button>
+    <button>Refund status</button>
+    <button>Reset password</button>
+    <button>Talk to an agent</button>
+  </div>
+  <form class="chat-input" id="chatForm">
+    <input type="text" id="chatInput" placeholder="Type your message…" autocomplete="off">
+    <button type="submit" aria-label="Send">➤</button>
+  </form>
+</div>
+
+<script>
+/* ================= DATA ================= */
+const categories = [
+  { id:'getting-started', icon:'🚀', name:'Getting Started',    desc:'New here? Learn the basics and set up your account in minutes.' },
+  { id:'account',         icon:'👤', name:'Account & Billing',  desc:'Manage your profile, subscription, payments and invoices.' },
+  { id:'orders',          icon:'📦', name:'Orders & Shipping',  desc:'Track orders, delivery times and shipping options.' },
+  { id:'technical',       icon:'🛠️', name:'Technical Support',  desc:'Fix login problems, bugs and other technical issues.' },
+  { id:'returns',         icon:'🔄', name:'Returns & Refunds',  desc:'Return policy, refund timelines and exchange process.' },
+  { id:'security',        icon:'🔒', name:'Security & Privacy', desc:'Keep your account safe and learn how we protect your data.' }
+];
+
+const faqs = [
+  { cat:'getting-started', q:'How do I create an account?', a:'Click the "Sign Up" button at the top right corner, enter your name, email and a password, then verify your email address. Your account will be ready in less than a minute.' },
+  { cat:'getting-started', q:'Is there a mobile app available?', a:'Yes! Our app is available for both Android and iOS. Search for "HelpDesk" in the Google Play Store or Apple App Store.' },
+  { cat:'getting-started', q:'How do I navigate the dashboard?', a:'After logging in you will see your dashboard with quick links to Orders, Billing, Settings and Support. Use the left sidebar to switch between sections.' },
+  { cat:'account', q:'How do I update my billing information?', a:'Go to Account → Billing → Payment Methods. There you can add a new card, set a default payment method, or remove old ones.' },
+  { cat:'account', q:'How do I change my password?', a:'Navigate to Account → Security → Change Password. You will need to enter your current password before setting a new one.' },
+  { cat:'account', q:'Can I upgrade or downgrade my plan?', a:'Absolutely. Visit Account → Subscription and choose the plan that fits you. Changes take effect immediately and billing is prorated.' },
+  { cat:'orders', q:'How can I track my order?', a:'Log in and go to My Orders. Click on any order to see its live tracking status. You will also receive tracking updates by email and SMS.' },
+  { cat:'orders', q:'How long does shipping take?', a:'Standard shipping takes 3–7 business days. Express shipping takes 1–2 business days. International orders may take 7–15 business days.' },
+  { cat:'orders', q:'Can I change my shipping address after ordering?', a:'You can change the address within 2 hours of placing the order from My Orders → Edit. After that, please contact support as soon as possible.' },
+  { cat:'technical', q:'The website is not loading properly. What should I do?', a:'Try clearing your browser cache and cookies, disable browser extensions, or try a different browser. If the issue continues, submit a ticket with a screenshot.' },
+  { cat:'technical', q:'I am not receiving verification emails.', a:'Check your spam or promotions folder first and make sure support@helpdesk.com is whitelisted. You can request a new email from the login page after 60 seconds.' },
+  { cat:'technical', q:'Which browsers are supported?', a:'We support the latest versions of Chrome, Firefox, Safari and Microsoft Edge. For the best experience, keep your browser updated.' },
+  { cat:'returns', q:'What is your return policy?', a:'Items can be returned within 30 days of delivery in their original condition. Some items like perishable goods and personalized products are non-returnable.' },
+  { cat:'returns', q:'How long do refunds take?', a:'Once we receive your return, refunds are processed within 5–7 business days. The time for the money to appear depends on your bank or card provider.' },
+  { cat:'security', q:'How is my personal data protected?', a:'We use 256-bit SSL encryption, regular security audits, and never share your data with third parties without your consent. Read our Privacy Policy for details.' },
+  { cat:'security', q:'How do I enable two-factor authentication (2FA)?', a:'Go to Account → Security → Two-Factor Authentication and follow the setup steps using an authenticator app or SMS.' }
+];
+
+const botReplies = [
+  { keys:['track','order','shipping','ship','deliver','package','parcel','courier'],
+    reply:'📦 You can track your order from <b>My Account → Orders</b>. Orders usually ship within 1–2 business days and arrive in 3–7 days. If you share your <b>order ID</b>, I can look into it further.' },
+  { keys:['refund','return','money back','exchange','cancel'],
+    reply:'🔄 We accept returns within <b>30 days</b> of delivery. Refunds are processed within 5–7 business days after we receive the item. Would you like to open a return request?' },
+  { keys:['password','login','log in','sign in','account','locked','otp','verify'],
+    reply:'🔐 To reset your password, click <b>“Forgot password?”</b> on the login page and follow the email instructions. If your account is locked, please wait 15 minutes or <a href="#ticket">submit a ticket</a>.' },
+  { keys:['payment','billing','charge','invoice','card','bkash','nagad','pay'],
+    reply:'💳 You can view invoices and update your payment method under <b>Account → Billing</b>. If you see an unexpected charge, please <a href="#ticket">submit a ticket</a> with the transaction ID.' },
+  { keys:['agent','human','person','representative','someone'],
+    reply:'👤 Sure! Our live agents are available <b>Sat–Thu, 9 AM – 9 PM</b>. I’m connecting you now… In the meantime you can also <a href="#ticket">submit a ticket</a> for a guaranteed reply within 24 hours.' },
+  { keys:['thank','thanks','thx','dhonnobad'],
+    reply:'You’re welcome! 😊 Is there anything else I can help you with?' },
+  { keys:['bye','goodbye','see you'],
+    reply:'Goodbye! Have a great day 👋' },
+  { keys:['hello','hi','hey','salam','assalamu','good morning','good evening'],
+    reply:'Hello! 👋 How can I help you today? You can ask about <b>orders</b>, <b>refunds</b>, your <b>account</b>, or <b>billing</b>.' }
+];
+const fallback = 'Hmm, I’m not sure I understood that 🤔. Try asking about <b>orders</b>, <b>refunds</b>, <b>account</b> or <b>billing</b> — or type <b>“agent”</b> to talk to a human.';
+
+/* ================= NAVBAR ================= */
+const hamburger = document.getElementById('hamburger');
+const navLinks  = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => navLinks.classList.toggle('show'));
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinks.classList.remove('show')));
+
+/* ================= CATEGORIES & FAQ ================= */
+const catGrid     = document.getElementById('catGrid');
+const faqList     = document.getElementById('faqList');
+const faqFilters  = document.getElementById('faqFilters');
+const noResults   = document.getElementById('noResults');
+const searchTag   = document.getElementById('searchTag');
+const searchTerm  = document.getElementById('searchTerm');
+const searchInput = document.getElementById('searchInput');
+let activeCat = 'all', query = '';
+
+// Render category cards
+catGrid.innerHTML = categories.map(c => `
+  <div class="cat-card" data-cat="${c.id}">
+    <div class="cat-icon">${c.icon}</div>
+    <h3>${c.name}</h3>
+    <p>${c.desc}</p>
+    <span class="count">${faqs.filter(f => f.cat === c.id).length} articles →</span>
+  </div>`).join('');
+
+catGrid.querySelectorAll('.cat-card').forEach(card => card.addEventListener('click', () => {
+  query = ''; searchInput.value = '';
+  setFilter(card.dataset.cat);
+  document.getElementById('faq').scrollIntoView({ behavior:'smooth' });
+}));
+
+// Render filter buttons
+faqFilters.innerHTML = `<button class="filter-btn active" data-cat="all">All</button>` +
+  categories.map(c => `<button class="filter-btn" data-cat="${c.id}">${c.name}</button>`).join('');
+faqFilters.querySelectorAll('.filter-btn').forEach(b => b.addEventListener('click', () => setFilter(b.dataset.cat)));
+
+function setFilter(cat) {
+  activeCat = cat;
+  faqFilters.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.cat === cat));
+  renderFaqs();
+}
+
+function renderFaqs() {
+  const q = query.toLowerCase();
+  const list = faqs.filter(f =>
+    (activeCat === 'all' || f.cat === activeCat) &&
+    (f.q.toLowerCase().includes(q) || f.a.toLowerCase().includes(q))
+  );
+  faqList.innerHTML = list.map(f => `
+    <div class="faq-item">
+      <div class="faq-q">${f.q}<span class="arrow">▼</span></div>
+      <div class="faq-a"><p>${f.a}</p></div>
+    </div>`).join('');
+  noResults.style.display = list.length ? 'none' : 'block';
+  searchTag.style.display = query ? 'flex' : 'none';
+  searchTerm.textContent  = query;
+
+  // Accordion behaviour
+  faqList.querySelectorAll('.faq-q').forEach(el => el.addEventListener('click', () => {
+    const item = el.parentElement;
+    const wasOpen = item.classList.contains('open');
+    faqList.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!wasOpen) item.classList.add('open');
+  }));
+}
+renderFaqs();
+
+/* ================= SEARCH ================= */
+document.getElementById('searchForm').addEventListener('submit', e => {
+  e.preventDefault();
+  query = searchInput.value.trim();
+  setFilter('all');
+  document.getElementById('faq').scrollIntoView({ behavior:'smooth' });
+});
+searchInput.addEventListener('input', () => { query = searchInput.value.trim(); renderFaqs(); });
+document.getElementById('clearSearch').addEventListener('click', () => {
+  query = ''; searchInput.value = ''; renderFaqs();
+});
+
+/* ================= TICKET FORM ================= */
+const ticketForm = document.getElementById('ticketForm');
+const successBox = document.getElementById('successBox');
+
+function validate(id, isInvalid) {
+  document.getElementById(id).closest('.form-group').classList.toggle('invalid', isInvalid);
+  return !isInvalid;
+}
+
+ticketForm.addEventListener('submit', e => {
+  e.preventDefault();
+  const name    = document.getElementById('name').value.trim();
+  const email   = document.getElementById('email').value.trim();
+  const subject = document.getElementById('subject').value.trim();
+  const message = document.getElementById('message').value.trim();
+
+  let ok = true;
+  ok = validate('name',    name.length < 2) && ok;
+  ok = validate('email',   !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) && ok;
+  ok = validate('subject', subject.length < 3) && ok;
+  ok = validate('message', message.length < 20) && ok;
+  if (!ok) return;
+
+  const ticketId = 'HD-' + Math.floor(100000 + Math.random() * 900000);
+  document.getElementById('ticketId').textContent    = '#' + ticketId;
+  document.getElementById('ticketEmail').textContent = email;
+  ticketForm.style.display = 'none';
+  successBox.style.display = 'block';
+  successBox.scrollIntoView({ behavior:'smooth', block:'center' });
+});
+
+document.getElementById('newTicket').addEventListener('click', () => {
+  ticketForm.reset();
+  ticketForm.style.display = 'block';
+  successBox.style.display = 'none';
+});
+
+ticketForm.querySelectorAll('input, textarea').forEach(el =>
+  el.addEventListener('input', () => el.closest('.form-group').classList.remove('invalid'))
+);
+
+/* ================= LIVE CHAT ================= */
+const chatBtn    = document.getElementById('chatBtn');
+const chatIcon   = document.getElementById('chatIcon');
+const chatBadge  = document.getElementById('chatBadge');
+const chatWindow = document.getElementById('chatWindow');
+const chatBody   = document.getElementById('chatBody');
+const chatInput  = document.getElementById('chatInput');
+const chatForm   = document.getElementById('chatForm');
+let chatStarted = false;
+
+function toggleChat(force) {
+  const open = force !== undefined ? force : !chatWindow.classList.contains('open');
+  chatWindow.classList.toggle('open', open);
+  chatIcon.textContent = open ? '✕' : '💬';
+  chatBadge.style.display = 'none';
+  if (open) {
+    chatInput.focus();
+    if (!chatStarted) {
+      chatStarted = true;
+      setTimeout(() => botSay('Hi there! 👋 I’m your virtual assistant. How can I help you today?'), 300);
+    }
+  }
+}
+chatBtn.addEventListener('click', () => toggleChat());
+document.getElementById('chatClose').addEventListener('click', () => toggleChat(false));
+document.getElementById('openChatLink').addEventListener('click', e => { e.preventDefault(); toggleChat(true); });
+
+function addMsg(content, who) {
+  const d = document.createElement('div');
+  d.className = 'msg ' + who;
+  if (who === 'user') d.textContent = content; else d.innerHTML = content;
+  chatBody.appendChild(d);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function botSay(html) {
+  const t = document.createElement('div');
+  t.className = 'msg bot typing';
+  t.innerHTML = '<span></span><span></span><span></span>';
+  chatBody.appendChild(t);
+  chatBody.scrollTop = chatBody.scrollHeight;
+  setTimeout(() => { t.remove(); addMsg(html, 'bot'); }, 900);
+}
+
+function getReply(text) {
+  const t = text.toLowerCase();
+  for (const r of botReplies) {
+    if (r.keys.some(k => new RegExp('\\b' + k).test(t))) return r.reply;
+  }
+  return fallback;
+}
+
+function sendMessage(text) {
+  text = text.trim();
+  if (!text) return;
+  addMsg(text, 'user');
+  chatInput.value = '';
+  setTimeout(() => botSay(getReply(text)), 300);
+}
+
+chatForm.addEventListener('submit', e => { e.preventDefault(); sendMessage(chatInput.value); });
+document.querySelectorAll('#quickReplies button').forEach(b => b.addEventListener('click', () => sendMessage(b.textContent)));
+</script>
+</body>
+</html>
