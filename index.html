@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EID FESTIVAL MEAT ASSOCIATION - মাংস সমিতি</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts for Bangla & English -->
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header class="navbar">
+        <div class="container nav-content">
+            <div class="logo">
+                <span class="logo-icon">🐄</span>
+                <div>
+                    <h1>EID FESTIVAL MEAT ASSOCIATION</h1>
+                    <p>ঈদ ফেস্টিভ্যাল মাংস সমিতি • ঐক্য ও আমানত</p>
+                </div>
+            </div>
+            <button onclick="window.print()" class="btn btn-outline no-print">🖨️ হিসাব প্রিন্ট করুন</button>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- Notice Board -->
+        <section class="notice-banner">
+            <div class="notice-header">
+                <h3>📢 জরুরি নোটিশ বোর্ড</h3>
+                <button onclick="editNotice()" class="btn-small no-print">✏️ নোটিশ এডিট</button>
+            </div>
+            <p id="noticeText">আগামী শুক্রবার বাদ আসর সমিতির মাসিক মিটিং ও গরু ক্রয় সংক্রান্ত আলোচনা অনুষ্ঠিত হবে। সকল সদস্যকে যথাসময়ে উপস্থিত থাকার জন্য অনুরোধ করা হলো।</p>
+        </section>
+
+        <!-- Dashboard Summary Cards -->
+        <section class="dashboard-grid">
+            <div class="card stat-card green">
+                <h4>মোট সদস্য / শেয়ার</h4>
+                <h2 id="totalMembers">0 জন (0 শেয়ার)</h2>
+            </div>
+            <div class="card stat-card blue">
+                <h4>মোট জমা (ফান্ড)</h4>
+                <h2 id="totalDeposit">৳ 0</h2>
+            </div>
+            <div class="card stat-card red">
+                <h4>মোট খরচ (গরু ও অন্যান্য)</h4>
+                <h2 id="totalExpense">৳ 0</h2>
+            </div>
+            <div class="card stat-card gold">
+                <h4>বর্তমান ক্যাশ ব্যালেন্স</h4>
+                <h2 id="currentBalance">৳ 0</h2>
+            </div>
+        </section>
+
+        <!-- Action Forms Section (Hidden during print) -->
+        <section class="forms-grid no-print">
+            
+            <!-- Add Member Form -->
+            <div class="card form-card">
+                <h3>👤 নতুন সদস্য যোগ করুন</h3>
+                <form id="memberForm">
+                    <div class="form-group">
+                        <label>সদস্যের নাম *</label>
+                        <input type="text" id="memberName" placeholder="যেমন: মোঃ আব্দুল করিম" required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>মোবাইল নম্বর *</label>
+                            <input type="tel" id="memberPhone" placeholder="017XXXXXXXX" required>
+                        </div>
+                        <div class="form-group">
+                            <label>শেয়ার সংখ্যা *</label>
+                            <input type="number" id="memberShares" value="1" min="1" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>সদস্যের ছবি (ফোন/পিসি থেকে সিলেক্ট করুন)</label>
+                        <input type="file" id="memberPhoto" accept="image/*">
+                    </div>
+                    <button type="submit" class="btn btn-primary">সদস্য যুক্ত করুন</button>
+                </form>
+            </div>
+
+            <!-- Add Transaction (Deposit / Expense) Form -->
+            <div class="card form-card">
+                <h3>💰 জমা বা খরচের হিসাব যুক্ত করুন</h3>
+                <form id="transactionForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>হিসাবের ধরন *</label>
+                            <select id="txType" required>
+                                <option value="deposit">➕ টাকা জমা (Deposit)</option>
+                                <option value="expense">➖ টাকা খরচ (Expense)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>তারিখ *</label>
+                            <input type="date" id="txDate" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>বিবরণ / সদস্যের নাম *</label>
+                        <input type="text" id="txDesc" placeholder="যেমন: জানুয়ারি কিস্তি - রহিম / গরু ক্রয় বাবদ" required>
+                    </div>
+                    <div class="form-group">
+                        <label>টাকার পরিমাণ (৳) *</label>
+                        <input type="number" id="txAmount" placeholder="যেমন: 5000" min="1" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary">হিসাব সেভ করুন</button>
+                </form>
+            </div>
+
+        </section>
+
+        <!-- Members List Section -->
+        <section class="card section-box">
+            <div class="section-header">
+                <h3>👥 সমিতির সম্মানিত সদস্যবৃন্দ</h3>
+                <input type="text" id="searchMember" placeholder="নাম বা নম্বর দিয়ে খুঁজুন..." class="search-input no-print">
+            </div>
+            <div id="membersGrid" class="members-grid">
+                <!-- Members will load here dynamically -->
+            </div>
+        </section>
+
+        <!-- Financial Ledger Table -->
+        <section class="card section-box">
+            <div class="section-header">
+                <h3>📊 জমা ও খরচের বিস্তারিত হিসাব</h3>
+                <button onclick="resetAllData()" class="btn-danger-small no-print">সব ডাটা রিসেট</button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>তারিখ</th>
+                            <th>বিবরণ</th>
+                            <th>ধরন</th>
+                            <th>পরিমাণ (৳)</th>
+                            <th class="no-print">অ্যাকশন</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionTableBody">
+                        <!-- Transactions will load here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>© 2026 EID FESTIVAL MEAT ASSOCIATION (মাংস সমিতি)। সর্বস্বত্ব সংরক্ষিত।</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
